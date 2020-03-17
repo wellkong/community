@@ -1,5 +1,6 @@
-package life.majiang.community.model;
+package life.majiang.community.dto;
 
+import life.majiang.community.model.User;
 import lombok.Data;
 
 /**
@@ -26,18 +27,22 @@ import lombok.Data;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: User
+ * @ClassName: QuestionDTO
  * @Author: willkong
- * @Date: 2020/3/13 16:58
+ * @Date: 2020/3/17 16:49
  * @Description: //TODO
  */
 @Data
-public class User {
-    private Integer id;
-    private String name;
-    private String accountId;
-    private String token;
+public class QuestionDTO {
+    private int id;
+    private String title;
+    private String description;
+    private String tag;
     private Long gmtCreate;
     private Long gmtModified;
-    private String avatarUrl;
+    private Integer crtator;
+    private Integer commentCount;
+    private Integer viewCount;
+    private Integer likeCount;
+    private User user;
 }

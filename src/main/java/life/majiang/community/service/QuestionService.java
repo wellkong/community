@@ -1,6 +1,16 @@
-package life.majiang.community.model;
+package life.majiang.community.service;
 
-import lombok.Data;
+import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.mapper.QuestionMapper;
+import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.model.Question;
+import life.majiang.community.model.User;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -26,18 +36,28 @@ import lombok.Data;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: User
+ * @ClassName: QuestionService
  * @Author: willkong
- * @Date: 2020/3/13 16:58
+ * @Date: 2020/3/17 16:51
  * @Description: //TODO
  */
-@Data
-public class User {
-    private Integer id;
-    private String name;
-    private String accountId;
-    private String token;
-    private Long gmtCreate;
-    private Long gmtModified;
-    private String avatarUrl;
+@Service
+public class QuestionService {
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private QuestionMapper questionMapper;
+
+    public List<QuestionDTO> list() {
+        List<Question> questions = questionMapper.list();
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        for (Question question : questions) {
+            User user = userMapper.findById(question.getCrtator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        return questionDTOList;
+    }
 }
