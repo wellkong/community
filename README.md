@@ -13,7 +13,7 @@
 ##工具
 [Git](https://git-scm.com/download)
 [Visual Paradigm](https://www.visual-paradigm.com)
-
+[Flyway](https://flywaydb.org/getstarted/firststeps/maven)
 
 ##配置H2内嵌数据库 重点注意
 ```
@@ -62,4 +62,7 @@ spring.h2.console.settings.web-allow-others=true
 5.在网页中打开网址：localhost:8887/h2-console
 输入用户名和密码启动数据库，至此就可以正常的使用h2内嵌数据库了。
 ```
-
+```bash
+..\src\main\resources\db/migration/V1__Create_user_table.sql
+mvn flyway:migrate
+```
