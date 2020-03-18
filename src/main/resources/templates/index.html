@@ -39,7 +39,9 @@
                         <li><a href="#">退出登录</a></li>
                     </ul>
                 </li>
-                <li th:if="${session.user==null}"><a href="https://github.com/login/oauth/authorize?client_id=9c21f9e0227fce6cfe78&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a></li>
+                <li th:if="${session.user==null}"><a
+                        href="https://github.com/login/oauth/authorize?client_id=9c21f9e0227fce6cfe78&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -49,7 +51,7 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>发现</h2>
             <hr>
-            <div class="media" th:each="question:${questions}">
+            <div class="media" th:each="question:${pageination.questions}">
                 <div class="media-left">
                     <a href="#">
                         <img class="media-object img-rounded"
@@ -59,9 +61,39 @@
                 <div class="media-body">
                     <h4 class="media-heading" th:text="${question.title}"></h4>
                     <span th:text="${question.description}"></span><br>
-                    <span class="text-desc"><span th:text="${question.commentCount}"></span>个回复 • <span th:text="${question.viewCount}"></span> 次浏览 • <span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span></span>
+                    <span class="text-desc"><span th:text="${question.commentCount}"></span>个回复 • <span
+                            th:text="${question.viewCount}"></span> 次浏览 • <span
+                            th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span></span>
                 </div>
             </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:if="${pageination.showFirstPage}">
+                        <a href="/?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pageination.showPrevious}">
+                        <a th:href="@{/(page=${pageination.page - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page:${pageination.pages}" th:class="${pageination.page == page}?'active':''">
+                        <a th:href="@{/(page=${page})}" th:text="${page}"></a>
+                    </li>
+                    <li th:if="${pageination.showNext}">
+                        <a th:href="@{/(page=${pageination.page + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pageination.showEndPage}">
+                        <a th:href="@{/(page=${pageination.totalPage})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <h3>热门话题</h3>
