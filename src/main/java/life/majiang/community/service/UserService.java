@@ -1,7 +1,9 @@
-package life.majiang.community.mapper;
+package life.majiang.community.service;
 
+import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.User;
-import org.apache.ibatis.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -27,25 +29,30 @@ import org.apache.ibatis.annotations.*;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: UserMapper
+ * @ClassName: UserService
  * @Author: willkong
- * @Date: 2020/3/13 16:54
+ * @Date: 2020/3/19 16:10
  * @Description: //TODO
  */
-@Mapper
-public interface UserMapper {
-    @Insert("insert into user (name,account_id,token,gmt_create,gmt_modified,avatar_url) values (#{name},#{accountId},#{token},#{gmtCreate},#{gmtModified},#{avatarUrl})")
-    void insert(User user);
+@Service
+public class UserService {
+    @Autowired
+    private UserMapper userMapper;
 
-    @Select("select * from user where token = #{token}")
-    User findByToken(@Param("token") String token);
-
-    @Select("select * from user where id = #{id}")
-    User findById(@Param("id") Integer id);
-
-    @Select("select * from user where account_id = #{accountId}")
-    User findByAccountId(@Param("accountId") String accountId);
-
-    @Update("update user set name = #{name}, token = #{token}, gmt_modified = #{gmtModified}, avatar_url = #{avatarUrl} where id = #{id}")
-    void update(User dbUser);
+    public void createOrUpdate(User user) {
+        User dbUser = userMapper.findByAccountId(user.getAccountId());
+        if (dbUser == null){
+            //插入
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            userMapper.insert(user);
+        }else {
+            //更新
+            dbUser.setGmtModified(user.getGmtCreate());
+            dbUser.setAvatarUrl(user.getAvatarUrl());
+            dbUser.setName(user.getName());
+            dbUser.setToken(user.getToken());
+            userMapper.update(dbUser);
+        }
+    }
 }
