@@ -1,5 +1,6 @@
 package life.majiang.community.controller;
 
+import life.majiang.community.dto.PageinationDTO;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.User;
 import life.majiang.community.service.QuestionService;
@@ -82,7 +83,8 @@ public class ProfileController {
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
         }
-        questionService.list(user.getId(),page,size);
+        PageinationDTO pageination = questionService.list(user.getId(), page, size);
+        model.addAttribute("pageination",pageination);
         return "profile";
     }
 }

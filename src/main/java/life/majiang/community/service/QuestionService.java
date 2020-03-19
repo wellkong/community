@@ -51,21 +51,28 @@ public class QuestionService {
 
     public PageinationDTO list(Integer page, Integer size) {
         PageinationDTO pageinationDTO = new PageinationDTO();
+        Integer totalPage;
         Integer totalCount = questionMapper.count();
-        pageinationDTO.setPagination(totalCount,page,size);
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
 
-        if (page<1){
-            page=1;
+        if (page < 1) {
+            page = 1;
         }
-        if (page>pageinationDTO.getTotalPage()){
-            page=pageinationDTO.getTotalPage();
+        if (page > totalPage) {
+            page = totalPage;
         }
+        pageinationDTO.setPagination(totalPage, page);
+
         //size*(page-1)
         Integer offset = size * (page - 1);
         List<Question> questions = questionMapper.list(offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
-            User user = userMapper.findById(question.getCrtator());
+            User user = userMapper.findById(question.getCreator());
             if (user != null) {
                 QuestionDTO questionDTO = new QuestionDTO();
                 BeanUtils.copyProperties(question, questionDTO);
@@ -77,23 +84,30 @@ public class QuestionService {
         return pageinationDTO;
     }
 
-    public void list(Integer userId, Integer page, Integer size) {
+    public PageinationDTO list(Integer userId, Integer page, Integer size) {
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer totalCount = questionMapper.count();
-        pageinationDTO.setPagination(totalCount,page,size);
+        Integer totalPage;
+        Integer totalCount = questionMapper.countByUserId(userId);
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
 
-        if (page<1){
-            page=1;
+        if (page < 1) {
+            page = 1;
         }
-        if (page>pageinationDTO.getTotalPage()){
-            page=pageinationDTO.getTotalPage();
+        if (page > totalPage) {
+            page = totalPage;
         }
+        pageinationDTO.setPagination(totalPage, page);
+
         //size*(page-1)
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.list(userId,offset, size);
+        List<Question> questions = questionMapper.listByUserId(userId, offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
-            User user = userMapper.findById(question.getCrtator());
+            User user = userMapper.findById(question.getCreator());
             if (user != null) {
                 QuestionDTO questionDTO = new QuestionDTO();
                 BeanUtils.copyProperties(question, questionDTO);
@@ -102,5 +116,6 @@ public class QuestionService {
             }
         }
         pageinationDTO.setQuestions(questionDTOList);
+        return pageinationDTO;
     }
 }

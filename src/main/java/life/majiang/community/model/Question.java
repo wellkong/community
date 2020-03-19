@@ -39,7 +39,7 @@ public class Question {
     private String tag;
     private Long gmtCreate;
     private Long gmtModified;
-    private Integer crtator;
+    private Integer creator;
     private Integer commentCount;
     private Integer viewCount;
     private Integer likeCount;
