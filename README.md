@@ -16,7 +16,11 @@
 [Visual Paradigm](https://www.visual-paradigm.com)
 [Flyway](https://flywaydb.org/getstarted/firststeps/maven)
 [Lombok](https://www.projectlombok.org)
+[crotree](https://www.octotree.io)
+[Table of content sidebar](https://chrome.google.com/webstore/detail/table-of-contents-sidebar/ohohkfheange)
+[One Tab](https://chrme.google.com/webstore/detail/chphlpgkbolifaimnlloiipkdnihall)
 [Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-attribute-values)
+[Postman](https://chrome.google.com/webstore/detail/coohjcphdfgbiolnekdpbcijmhambjff)
 
 ##配置H2内嵌数据库 重点注意
 ```
