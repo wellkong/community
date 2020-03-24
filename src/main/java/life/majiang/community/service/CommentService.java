@@ -1,19 +1,15 @@
-package life.majiang.community.controller;
+package life.majiang.community.service;
 
-import life.majiang.community.dto.CommentDTO;
-import life.majiang.community.dto.ResultDTO;
+import life.majiang.community.enums.CommentTypeEnum;
 import life.majiang.community.exception.CustomizeErrorCode;
+import life.majiang.community.exception.CustomizeException;
+import life.majiang.community.mapper.CommentMapper;
+import life.majiang.community.mapper.QuestionExtMapper;
+import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.model.Comment;
-import life.majiang.community.model.User;
-import life.majiang.community.service.CommentService;
+import life.majiang.community.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Service;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -39,34 +35,43 @@ import javax.servlet.http.HttpServletRequest;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: CommentController
+ * @ClassName: CommentService
  * @Author: willkong
- * @Date: 2020/3/23 18:11
+ * @Date: 2020/3/24 11:26
  * @Description: //TODO
  */
-@Controller
-public class CommentController {
-
+@Service
+public class CommentService {
     @Autowired
-    private CommentService commentService;
-
-    @ResponseBody
-    @RequestMapping(value = "/comment", method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
-                       HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+    private CommentMapper commentMapper;
+    @Autowired
+    private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
+    public void insert(Comment comment) {
+        if (comment.getParentId() == null || comment.getParentId() == 0){
+            throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
-        Comment comment = new Comment();
-        comment.setParentId(commentDTO.getParentId());
-        comment.setContent(commentDTO.getContent());
-        comment.setType(commentDTO.getType());
-        comment.setGmtModified(System.currentTimeMillis());
-        comment.setGmtCreate(System.currentTimeMillis());
-        comment.setCommentator(1L);
-        comment.setLikeCount(0L);
-        commentService.insert(comment);
-        return ResultDTO.okOf();
+        if (comment.getType() == null || !CommentTypeEnum.isExist(comment.getType())){
+            throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
+        }
+
+        if (comment.getType() == CommentTypeEnum.COMMENT.getType()){
+            //回复评论
+            Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+            if (dbComment == null){
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+            commentMapper.insert(comment);
+        }else {
+            //回复问题
+            Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
+            if (question == null){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+            commentMapper.insert(comment);
+            question.setCommentCount(1);
+            questionExtMapper.incCommentCount(question);
+        }
     }
 }

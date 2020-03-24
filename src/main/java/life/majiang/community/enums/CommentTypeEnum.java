@@ -1,12 +1,4 @@
-package life.majiang.community.controller;
-
-import life.majiang.community.dto.QuestionDTO;
-import life.majiang.community.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+package life.majiang.community.enums;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -32,24 +24,30 @@ import org.springframework.web.bind.annotation.PathVariable;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: QuessionController
+ * @ClassName: CommentTypeEnum
  * @Author: willkong
- * @Date: 2020/3/19 14:29
+ * @Date: 2020/3/24 11:23
  * @Description: //TODO
  */
-@Controller
-public class QuessionController {
-    @Autowired
-    private QuestionService questionService;
+public enum  CommentTypeEnum {
+    QUESTION(1),
+    COMMENT(2);
+    private Integer type;
 
-    @GetMapping("/question/{id}")
-    public String question(@PathVariable(name = "id") Long id,
-                           Model model) {
-        QuestionDTO questionDTO = questionService.getById(id);
-        //增加阅读数
-        questionService.incView(id);
-        model.addAttribute("question", questionDTO);
-        return "question";
+    public static boolean isExist(Integer type) {
+        for (CommentTypeEnum commentTypeEnum : CommentTypeEnum.values()) {
+            if (commentTypeEnum.getType() == type){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    CommentTypeEnum(Integer type) {
+        this.type = type;
     }
 }
-
