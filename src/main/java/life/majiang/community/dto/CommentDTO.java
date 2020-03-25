@@ -1,5 +1,6 @@
 package life.majiang.community.dto;
 
+import life.majiang.community.model.User;
 import lombok.Data;
 
 /**
@@ -28,12 +29,18 @@ import lombok.Data;
  *
  * @ClassName: CommentDTO
  * @Author: willkong
- * @Date: 2020/3/23 18:19
+ * @Date: 2020/3/25 11:59
  * @Description: //TODO
  */
 @Data
 public class CommentDTO {
+    private Long id;
     private Long parentId;
-    private String content;
     private Integer type;
+    private Long commentator;
+    private Long gmtCreate;
+    private Long gmtModified;
+    private Long likeCount;
+    private String content;
+    private User user;
 }
