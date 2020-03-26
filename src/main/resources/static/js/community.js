@@ -51,8 +51,8 @@ function comment(e) {
  */
 function collapseComments(e) {
     var id = e.getAttribute("data-id");
-
     var comments = $("#comment-" + id);
+
     //获取一下二级评论的展开状态
     var collapse = e.getAttribute("data-collapse");
     if (collapse) {
@@ -63,24 +63,16 @@ function collapseComments(e) {
     } else {
         //获取请求
         $.getJSON("/comment/" + id, function (data) {
-            console.log(data);
-            var commentBody = $("comment-body-" + id);
-            var items = [];
-
-            $.each(data.data, function (comment) {
-                var c = $("<div/>", {
-                    "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments",
-                    html: comment.content
+            debugger
+            var subCommentContainer = $("#comment-"+id);
+            $.each(data.data,function (index,comment) {
+                debugger
+                var c = $("<div/>",{
+                    "class":"col-lg-12 col-md-12 col-sm-12 col-xs-12 comments",
+                    html:comment.content
                 });
-                items.push(c);
+                subCommentContainer.prepend(c);
             });
-
-            commentBody.appendChild(
-                $("<div/>", {
-                    "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments",
-                    "id": "comment-" + id,
-                    html: items.join("")
-                }));
 
             //展开二级评论
             comments.addClass("in");
