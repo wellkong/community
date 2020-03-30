@@ -9,6 +9,7 @@
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/moment.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -54,7 +55,8 @@
                             <div th:text="${comment.content}"></div>
                             <div class="menu">
                                 <span class="glyphicon glyphicon-thumbs-up icon"></span>
-                                <span class="glyphicon glyphicon-comment icon" th:data-id="${comment.id}" onclick="collapseComments(this)"></span>
+                                <span class="glyphicon glyphicon-comment icon" th:data-id="${comment.id}"
+                                      onclick="collapseComments(this)" th:text="${comment.commentCount}"></span>
                                 <span class="pull-right"
                                       th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd')}"></span>
                             </div>
