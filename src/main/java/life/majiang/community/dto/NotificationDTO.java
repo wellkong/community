@@ -1,9 +1,7 @@
 package life.majiang.community.dto;
 
+import life.majiang.community.model.User;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -29,62 +27,17 @@ import java.util.List;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: PageinationDTO
+ * @ClassName: NotificationDTO
  * @Author: willkong
- * @Date: 2020/3/18 15:02
+ * @Date: 2020/4/2 18:16
  * @Description: //TODO
  */
 @Data
-public class PageinationDTO<T> {
-    private List<T> data;
-    private boolean showPrevious;
-    private boolean showFirstPage;
-    private boolean showNext;
-    private boolean showEndPage;
-    private Integer page;
-    private List<Integer> pages = new ArrayList<>();
-    private Integer totalPage;
-
-    public void setPagination(Integer totalPage, Integer page) {
-        this.totalPage = totalPage;
-        this.page = page;
-        pages.add(page);
-        for (int i = 1; i <= 3; i++) {
-            if (page - i > 0) {
-                pages.add(0, page - i);
-            }
-
-            if (page + i <= totalPage) {
-                pages.add(page + i);
-            }
-        }
-
-        //是否展示上一页
-        if (page == 1) {
-            showPrevious = false;
-        } else {
-            showPrevious = true;
-        }
-
-        //是否展示下一页
-        if (page == totalPage) {
-            showNext = false;
-        } else {
-            showNext = true;
-        }
-
-        //是否展示第一页
-        if (pages.contains(1)) {
-            showFirstPage = false;
-        } else {
-            showFirstPage = true;
-        }
-
-        //是否展示最后一页
-        if (pages.contains(totalPage)) {
-            showEndPage = false;
-        } else {
-            showEndPage = true;
-        }
-    }
+public class NotificationDTO {
+    private Long id;
+    private Long gmtCreate;
+    private Integer status;
+    private User notifier;
+    private String outerTitle;
+    private String type;
 }
