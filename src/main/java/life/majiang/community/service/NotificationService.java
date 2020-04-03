@@ -2,6 +2,10 @@ package life.majiang.community.service;
 
 import life.majiang.community.dto.NotificationDTO;
 import life.majiang.community.dto.PageinationDTO;
+import life.majiang.community.enums.NotificationStatusEnum;
+import life.majiang.community.enums.NotificationTypeEnum;
+import life.majiang.community.exception.CustomizeErrorCode;
+import life.majiang.community.exception.CustomizeException;
 import life.majiang.community.mapper.NotificationMapper;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.Notification;
@@ -9,6 +13,7 @@ import life.majiang.community.model.NotificationExample;
 import life.majiang.community.model.User;
 import life.majiang.community.model.UserExample;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +56,6 @@ import java.util.stream.Collectors;
 public class NotificationService {
     @Autowired
     private NotificationMapper notificationMapper;
-    @Autowired
-    private UserMapper userMapper;
 
     public PageinationDTO list(Long userId, Integer page, Integer size) {
         PageinationDTO<NotificationDTO> pageinationDTO = new PageinationDTO();
@@ -80,20 +83,46 @@ public class NotificationService {
         NotificationExample example = new NotificationExample();
         example.createCriteria()
                 .andReceiverEqualTo(userId);
+        example.setOrderByClause("gmt_create desc");
         List<Notification> notifications = notificationMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         if (notifications.size()==0){
             return pageinationDTO;
         }
-        Set<Long> disUserIds = notifications.stream().map(notify -> notify.getNotifier()).collect(Collectors.toSet());
-        List<Long> userIds = new ArrayList<>();
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andIdIn(userIds);
-        List<User> users = userMapper.selectByExample(userExample);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(u -> u.getId(), u -> u));
-
         List<NotificationDTO> notificationDTOS = new ArrayList<>();
+        for (Notification notification : notifications) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+            BeanUtils.copyProperties(notification,notificationDTO);
+            notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
+            notificationDTOS.add(notificationDTO);
+        }
 
         pageinationDTO.setData(notificationDTOS);
         return pageinationDTO;
+    }
+
+    public Long unreadCount(Long userId) {
+        NotificationExample notificationExample = new NotificationExample();
+        notificationExample.createCriteria()
+                .andReceiverEqualTo(userId)
+                .andStatusEqualTo(NotificationStatusEnum.UNREAD.getStatus());
+        return notificationMapper.countByExample(notificationExample);
+    }
+
+    public NotificationDTO read(Long id, User user) {
+        Notification notification = notificationMapper.selectByPrimaryKey(id);
+        if (notification==null){
+            throw new CustomizeException(CustomizeErrorCode.NOTIFICATION_NOT_FOUND);
+        }
+        if (notification.getReceiver()!=user.getId()){
+            throw new CustomizeException(CustomizeErrorCode.READ_NOTIFICATION_FAIL);
+        }
+
+        notification.setStatus(NotificationStatusEnum.READ.getStatus());
+        notificationMapper.updateByPrimaryKey(notification);
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        BeanUtils.copyProperties(notification,notificationDTO);
+        notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
+        return notificationDTO;
     }
 }

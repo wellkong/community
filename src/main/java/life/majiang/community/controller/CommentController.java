@@ -71,13 +71,13 @@ public class CommentController {
         comment.setCommentator(1L);
         comment.setLikeCount(0L);
         comment.setCommentCount(0);
-        commentService.insert(comment);
+        commentService.insert(comment, user);
         return ResultDTO.okOf();
     }
 
     @ResponseBody
     @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
-    public ResultDTO<List> comments(@PathVariable(name = "id") Long id){
+    public ResultDTO<List> comments(@PathVariable(name = "id") Long id) {
         List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(commentDTOS);
     }

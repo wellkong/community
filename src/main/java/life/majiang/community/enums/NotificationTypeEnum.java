@@ -29,9 +29,9 @@ package life.majiang.community.enums;
  * @Date: 2020/4/2 17:00
  * @Description: //TODO
  */
-public enum  NotificationEnum {
+public enum NotificationTypeEnum {
     REPLY_QUESTION(1,"回复了问题"),
-    REPLY_COMMENT(1,"回复了评论")
+    REPLY_COMMENT(2,"回复了评论")
     ;
     private int type;
     private String name;
@@ -44,8 +44,17 @@ public enum  NotificationEnum {
         return name;
     }
 
-    NotificationEnum(int status, String name){
+    NotificationTypeEnum(int status, String name){
         this.type = status;
         this.name = name;
+    }
+
+    public static String nameOfType(int type){
+        for (NotificationTypeEnum notificationTypeEnum : NotificationTypeEnum.values()) {
+            if (notificationTypeEnum.getType()==type){
+                return notificationTypeEnum.getName();
+            }
+        }
+        return "";
     }
 }

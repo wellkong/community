@@ -1,18 +1,18 @@
-package life.majiang.community.interceptor;
+package life.majiang.community.controller;
 
-import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.dto.NotificationDTO;
+import life.majiang.community.dto.PageinationDTO;
+import life.majiang.community.enums.NotificationTypeEnum;
 import life.majiang.community.model.User;
-import life.majiang.community.model.UserExample;
 import life.majiang.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -38,47 +38,28 @@ import java.util.List;
  * //                  佛祖保佑       永不宕机     永无BUG            //
  * ////////////////////////////////////////////////////////////////////
  *
- * @ClassName: SesstionInterceptor
+ * @ClassName: NotificationController
  * @Author: willkong
- * @Date: 2020/3/19 12:49
+ * @Date: 2020/4/3 15:47
  * @Description: //TODO
  */
-@Service
-public class SessionInterceptor implements HandlerInterceptor {
-    @Autowired
-    private UserMapper userMapper;
+@Controller
+public class NotificationController {
     @Autowired
     private NotificationService notificationService;
-
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length != 0) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
-                    String token = cookie.getValue();
-                    UserExample userExample = new UserExample();
-                    userExample.createCriteria().andTokenEqualTo(token);
-                    List<User> users = userMapper.selectByExample(userExample);
-                    if (users.size() != 0) {
-                        request.getSession().setAttribute("user", users.get(0));
-                        Long unreadCount = notificationService.unreadCount(users.get(0).getId());
-                        request.getSession().setAttribute("unreadCount", unreadCount);
-                    }
-                    break;
-                }
-            }
+    @GetMapping("/notification/{id}")
+    public String profile(HttpServletRequest request,@PathVariable(name = "id") Long id) {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
         }
-        return true;
-    }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
+        NotificationDTO notificationDTO = notificationService.read(id,user);
+        if (NotificationTypeEnum.REPLY_COMMENT.getType()==notificationDTO.getType()
+                ||NotificationTypeEnum.REPLY_QUESTION.getType()==notificationDTO.getType()){
+            return "redirect:/question/"+notificationDTO.getOuterid();
+        }else {
+            return "redirect:/";
+        }
     }
 }

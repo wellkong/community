@@ -1,8 +1,6 @@
 package life.majiang.community.controller;
 
-import life.majiang.community.dto.NotificationDTO;
 import life.majiang.community.dto.PageinationDTO;
-import life.majiang.community.mapper.NotificationMapper;
 import life.majiang.community.model.User;
 import life.majiang.community.service.NotificationService;
 import life.majiang.community.service.QuestionService;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -71,7 +68,7 @@ public class ProfileController {
             PageinationDTO pageination = questionService.list(user.getId(), page, size);
             model.addAttribute("pageination", pageination);
         } else if ("replies".equals(action)) {
-            PageinationDTO pageinationDTO = notificationService.list(user.getId(),page,size);
+            PageinationDTO pageinationDTO = notificationService.list(user.getId(), page, size);
             model.addAttribute("section", "replies");
             model.addAttribute("pageination", pageinationDTO);
             model.addAttribute("sectionName", "最新回复");
