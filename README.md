@@ -10,6 +10,7 @@
 [SpringBoot](https://docs.spring.io/spring-boot/docs/)
 [Spring](https://docs.spring.io/spring/docs/5.2.4.RELEASE/spring-framework-reference/web.html#mvc-handlermapping-interceptor)
 [Markdown 插件](http://editor.md.ipandao.com/)
+[UFile SDK](https://github.com/ucloud/ufile-sdk-java)
 
 ##工具
 [Git](https://git-scm.com/download)
