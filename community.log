@@ -1,0 +1,5 @@
+2020-04-08 14:51:34.092 DEBUG 59232 --- [http-nio-8887-exec-8] l.m.c.mapper.UserMapper.selectByExample  : ==> Parameters: f2b7c276-9395-4dcd-abf5-47ec1af92687(String)
+2020-04-08 14:51:34.096 DEBUG 59232 --- [http-nio-8887-exec-8] l.m.c.mapper.UserMapper.selectByExample  : <==      Total: 1
+2020-04-08 14:51:34.098 DEBUG 59232 --- [http-nio-8887-exec-8] l.m.c.m.N.countByExample                 : ==>  Preparing: select count(*) from NOTIFICATION WHERE ( RECEIVER = ? and STATUS = ? ) 
+2020-04-08 14:51:34.098 DEBUG 59232 --- [http-nio-8887-exec-8] l.m.c.m.N.countByExample                 : ==> Parameters: 1(Long), 0(Integer)
+2020-04-08 14:51:34.099 DEBUG 59232 --- [http-nio-8887-exec-8] l.m.c.m.N.countByExample                 : <==      Total: 1
