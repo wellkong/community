@@ -100,6 +100,7 @@ spring.h2.console.settings.web-allow-others=true
 ```
 ```bash
 ..\src\main\resources\db/migration/V1__Create_user_table.sql
+mvn flyway:repair
 mvn flyway:migrate
 
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
