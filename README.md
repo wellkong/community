@@ -25,7 +25,8 @@
 - mvn package
 ##启动项目
 - java -jar -Dspring.profiles.active=production target/community-0.0.1-SNAPSHOT.jar
-
+- ps -aux | grep java
+- git pull
 
 ##资料
 [Spring 文档](https://spring.io/guides)
