@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -61,8 +60,8 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PageinationDTO list(String search,Integer page, Integer size) {
-        if (StringUtils.isNotBlank(search)){
+    public PageinationDTO list(String search, Integer page, Integer size) {
+        if (StringUtils.isNotBlank(search)) {
             String[] tags = StringUtils.split(search, " ");
             search = Arrays.stream(tags).collect(Collectors.joining("|"));
         }
@@ -87,7 +86,7 @@ public class QuestionService {
         pageinationDTO.setPagination(totalPage, page);
 
         //size*(page-1)
-        Integer offset = size * (page - 1);
+        Integer offset = page < 1 ? 0 : size * (page - 1);
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
         questionQueryDTO.setSize(size);
@@ -191,7 +190,7 @@ public class QuestionService {
     }
 
     public List<QuestionDTO> selectRelated(QuestionDTO queryDTO) {
-        if (StringUtils.isBlank(queryDTO.getTag())){
+        if (StringUtils.isBlank(queryDTO.getTag())) {
             return new ArrayList<>();
         }
         String[] tags = StringUtils.split(queryDTO.getTag(), ",");
@@ -200,9 +199,9 @@ public class QuestionService {
         question.setId(queryDTO.getId());
         question.setTag(regexpTag);
         List<Question> questions = questionExtMapper.selectRelated(question);
-        List<QuestionDTO> questionDTOS = questions.stream().map(q ->{
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
             QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(q,questionDTO);
+            BeanUtils.copyProperties(q, questionDTO);
             return questionDTO;
         }).collect(Collectors.toList());
         return questionDTOS;
